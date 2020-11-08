@@ -1,4 +1,4 @@
-package main
+package geecache
 
 type Value interface {
 	// 返回值所在内存大小
@@ -7,7 +7,12 @@ type Value interface {
 
 type Cache interface {
 	// todo 支持 ttl
-	Get(key string) (Value, bool)
+	// 查找不到时， value 为 nil
+	Get(key string) Value
 	Set(key string, value Value)
 }
 
+type Entry struct {
+	Key   string
+	Value Value
+}
