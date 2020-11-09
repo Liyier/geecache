@@ -35,7 +35,6 @@ func (c *Cache) get(key string) *list.Element {
 	} else {
 		return nil
 	}
-
 }
 
 func (c *Cache)Get(key string) geecache.Value {
@@ -58,19 +57,23 @@ func (c *Cache)Set(key string, value geecache.Value)  {
 		c.provider[key] = e
 		c.nBytes += value.Len() + int64(len(key))
 	}
+	c.expireOldest()
 }
 
-func (c *Cache) expire() {
+func (c *Cache) expireOldest() {
 	for c.maxBytes != 0 && c.maxBytes < c.nBytes {
-		
+		// 淘汰队首元素
+		e := c.ll.Front()
+		c.del(e)
 	}
 }
 
 
-func (c *Cache) del(e *list.Element, key string){
+func (c *Cache) del(e *list.Element){
+	kv := e.Value.(*geecache.Entry)
+	key := kv.Key
 	c.ll.Remove(e)
 	delete(c.provider, key)
-	kv := e.Value.(*geecache.Entry)
 	c.nBytes -= kv.Value.Len() + int64(len(key))
 	if c.OnDeleted != nil {
 		c.OnDeleted(key, kv.Value)
@@ -79,6 +82,6 @@ func (c *Cache) del(e *list.Element, key string){
 
 func (c *Cache)Del(key string)  {
 	if e := c.get(key); e != nil {
-		c.del(e, key)
+		c.del(e)
 	}
 }
