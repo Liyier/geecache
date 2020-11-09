@@ -11,6 +11,7 @@ type Cache interface {
 	Get(key string) Value
 	Set(key string, value Value)
 	Del(key string)
+	Memory() int64
 }
 
 type Entry struct {
