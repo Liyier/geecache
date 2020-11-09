@@ -10,6 +10,7 @@ type Cache interface {
 	// 查找不到时， value 为 nil
 	Get(key string) Value
 	Set(key string, value Value)
+	Del(key string)
 }
 
 type Entry struct {
