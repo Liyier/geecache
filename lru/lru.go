@@ -44,7 +44,7 @@ func (c *Cache) Set(key string, value geecache.Value) {
 		// 更新值
 		kv.Value = value
 	} else {
-		e := c.ll.PushBack(geecache.Entry{Key: key, Value: value})
+		e := c.ll.PushBack(&geecache.Entry{Key: key, Value: value})
 		c.provider[key] = e
 		c.nBytes += value.Len() + int64(len(key))
 	}
@@ -61,6 +61,9 @@ func (c *Cache) Size() int {
 	return c.ll.Len()
 }
 
+func (c *Cache) Memory() int64 {
+	return c.nBytes
+}
 
 func (c *Cache) expireOldest() {
 	for c.maxBytes != 0 && c.maxBytes < c.nBytes {
